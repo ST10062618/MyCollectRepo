@@ -1,18 +1,124 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="16dp"
     tools:context=".MainActivity">
 
+    <!-- Heading: MyCollect -->
     <TextView
+        android:id="@+id/header_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="MyCollect"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:paddingBottom="16dp"
+        android:gravity="center_horizontal"
+        android:layout_alignParentTop="true"/>
+
+    <!-- Add Category Section -->
+    <EditText
+        android:id="@+id/category_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/header_text_view"
+        android:layout_marginBottom="16dp"
+        android:hint="Enter category name"
+        android:minHeight="48dp" />
+
+    <Button
+        android:id="@+id/add_category_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_below="@id/category_input"
+        android:text="Add Category"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- Category Spinner -->
+    <Spinner
+        android:id="@+id/category_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/add_category_button"
+        android:layout_marginTop="16dp"
+        android:minHeight="48dp" />
+
+    <!-- Set Goal Section -->
+    <EditText
+        android:id="@+id/goal_number_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/category_spinner"
+        android:layout_marginTop="16dp"
+        android:hint="Enter goal number"
+        android:inputType="number"
+        android:minHeight="48dp" />
+
+    <Button
+        android:id="@+id/add_goal_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/goal_number_input"
+        android:text="Set Goal"/>
+
+    <!-- Add Item Section -->
+    <EditText
+        android:id="@+id/item_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/add_goal_button"
+        android:layout_marginTop="16dp"
+        android:hint="Enter item"
+        android:minHeight="48dp" />
+
+    <EditText
+        android:id="@+id/item_description_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/item_input"
+        android:layout_marginTop="16dp"
+        android:hint="Enter item description"
+        android:minHeight="48dp" />
+
+    <EditText
+        android:id="@+id/item_date_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/item_description_input"
+        android:layout_marginTop="16dp"
+        android:hint="Enter date of acquisition (YYYY-MM-DD)"
+        android:minHeight="48dp" />
+
+    <Button
+        android:id="@+id/add_item_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/item_date_input"
+        android:text="Add Item"/>
+
+    <!-- View Collections Button -->
+    <Button
+        android:id="@+id/view_collections_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/add_item_button"
+        android:layout_marginTop="16dp"
+        android:text="View Collections"
+        android:textSize="18sp" />
+
+    <!-- Display Goal List -->
+    <TextView
+        android:id="@+id/goal_list_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/view_collections_button"
+        android:layout_marginTop="32dp"/>
+
+    <!-- Display Item List -->
+    <TextView
+        android:id="@+id/item_list_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/goal_list_text_view"
+        android:layout_marginTop="32dp"/>
+</RelativeLayout>
