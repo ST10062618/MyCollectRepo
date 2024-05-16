@@ -13,16 +13,12 @@ import java.util.regex.Pattern
 
 class SignUp : AppCompatActivity() {
 
-    private lateinit var auth: FirebaseAuth
     private val passwordPattern: Pattern =
         Pattern.compile("^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#\$%^&*()-_+=|\\\\{}\\[\\]:;<>,.?/~]).{6,}$")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_up)
-
-        // Initialize Firebase Auth
-        auth = FirebaseAuth.getInstance()
 
         // Find views by their IDs
         val signUpBtn = findViewById<Button>(R.id.signUpbtn)
@@ -82,7 +78,7 @@ class SignUp : AppCompatActivity() {
     }
 
     private fun createAccountInFirebase(email: String, password: String) {
-        auth.createUserWithEmailAndPassword(email, password)
+        FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     // Account creation is successful

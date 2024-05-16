@@ -1,6 +1,6 @@
 package com.authorisation.mycollectsub
 
-import com.google.firebase.auth.FirebaseAuth
+
 import android.content.Intent
 import android.os.Bundle
 import android.widget.*
@@ -37,7 +37,6 @@ object DataManager {
 }
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var auth: FirebaseAuth
     private lateinit var categoryInput: EditText
     private lateinit var goalInput: EditText
     private lateinit var itemInput: EditText
@@ -55,7 +54,6 @@ class MainActivity : AppCompatActivity() {
 
         // Initialize Firebase
         FirebaseApp.initializeApp(this)
-        auth = FirebaseAuth.getInstance()
 
         // Initialize UI components
         goalInput = findViewById(R.id.goal_number_input)
