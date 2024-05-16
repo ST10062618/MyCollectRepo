@@ -7,7 +7,13 @@ import android.widget.TextView
 import android.widget.Button
 import android.widget.Spinner
 import android.widget.ArrayAdapter
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.activity.enableEdgeToEdge
 import android.app.Application
+import android.content.Intent
+import android.widget.RelativeLayout
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.FirebaseApp
 data class Goal(val category: String, var number: Int)
 
@@ -37,6 +43,7 @@ object DataManager {
 }
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var auth: FirebaseAuth
     private lateinit var categoryInput: EditText
     private lateinit var goalInput: EditText
     private lateinit var itemInput: EditText
@@ -51,7 +58,15 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-      //  enableEdgeToEdge()
+        enableEdgeToEdge()
+
+        // Initialize Firebase
+        FirebaseApp.initializeApp(this)
+
+        // Now you can use FirebaseAuth
+        val auth:  FirebaseAuth = FirebaseAuth.getInstance()
+        // Ensure the ID matches the one defined in activity_main.xml
+        val mainLayout = findViewById<RelativeLayout>(R.id.main)
 
         // Initialize UI components
         goalInput = findViewById(R.id.goal_number_input)
@@ -130,25 +145,5 @@ class MainActivity : AppCompatActivity() {
         categorySpinner.adapter = adapter
     }
 
-    private fun updateUI() {
-        val goalsList = DataManager.getAllGoals()
-        val itemList = DataManager.getAllItems()
 
-        // Format goals list text
-        val formattedGoals = StringBuilder()
-        for (goal in goalsList) {
-            formattedGoals.append("Category: ${goal.category}\n")
-            formattedGoals.append("Goal: ${goal.number}\n\n")
-        }
-        findViewById<TextView>(R.id.goal_list_text_view).text = formattedGoals.toString().trim()
-
-        // Format item list text
-        val formattedItems = StringBuilder()
-        for (item in itemList) {
-            formattedItems.append("Item: ${item.itemAdded}\n")
-            formattedItems.append("Description: ${item.description}\n")
-            formattedItems.append("Date of Acquisition: ${item.dateOfAcquisition}\n\n")
-        }
-        findViewById<TextView>(R.id.item_list_text_view).text = formattedItems.toString().trim()
-    }
 }
