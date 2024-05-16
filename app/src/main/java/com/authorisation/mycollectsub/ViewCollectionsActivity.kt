@@ -1,40 +1,49 @@
 package com.authorisation.mycollectsub
 
+
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
+import android.widget.Button
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.setupActionBarWithNavController
-import com.authorisation.mycollectsub.databinding.ActivityViewCollectionsBinding
 
 class ViewCollectionsActivity : AppCompatActivity() {
 
-    private lateinit var appBarConfiguration: AppBarConfiguration
-    private lateinit var binding: ActivityViewCollectionsBinding
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_view_collections)
 
-        binding = ActivityViewCollectionsBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        // Update UI to display collections
+        updateUI()
 
-        setSupportActionBar(binding.toolbar)
+        // Find the back button
+        val backButton: Button = findViewById(R.id.back_button)
 
-        val navController = findNavController(R.id.nav_host_fragment_content_view_collections)
-        appBarConfiguration = AppBarConfiguration(navController.graph)
-        setupActionBarWithNavController(navController, appBarConfiguration)
-
-        binding.fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
+        // Set click listener for the back button
+        backButton.setOnClickListener {
+            // Finish the current activity and go back to MainActivity
+            finish()
         }
     }
 
-    override fun onSupportNavigateUp(): Boolean {
-        val navController = findNavController(R.id.nav_host_fragment_content_view_collections)
-        return navController.navigateUp(appBarConfiguration)
-                || super.onSupportNavigateUp()
+    private fun updateUI() {
+        val goalsList = DataManager.getAllGoals()
+        val itemList = DataManager.getAllItems()
+
+        // Format goals list text
+        val formattedGoals = StringBuilder()
+        for (goal in goalsList) {
+            formattedGoals.append("Category: ${goal.category}\n")
+            formattedGoals.append("Goal: ${goal.number}\n\n")
+        }
+        findViewById<TextView>(R.id.goal_list_text_view).text = formattedGoals.toString().trim()
+
+        // Format item list text
+        val formattedItems = StringBuilder()
+        for (item in itemList) {
+            formattedItems.append("Item: ${item.itemAdded}\n")
+            formattedItems.append("Description: ${item.description}\n")
+            formattedItems.append("Date of Acquisition: ${item.dateOfAcquisition}\n\n")
+        }
+        findViewById<TextView>(R.id.item_list_text_view).text = formattedItems.toString().trim()
     }
 }

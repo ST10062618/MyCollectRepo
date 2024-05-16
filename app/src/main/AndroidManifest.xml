@@ -13,6 +13,11 @@
         android:theme="@style/Theme.MyCollectSub"
         tools:targetApi="31">
         <activity
+            android:name=".Splash"
+            android:exported="false"
+            android:label="@string/title_activity_splash"
+            android:theme="@style/Theme.MyCollectSub" />
+        <activity
             android:name=".ViewCollectionsActivity"
             android:exported="false"
             android:label="@string/title_activity_view_collections"
