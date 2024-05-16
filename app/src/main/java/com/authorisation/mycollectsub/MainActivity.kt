@@ -1,20 +1,14 @@
 package com.authorisation.mycollectsub
 
-import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.auth.FirebaseAuth
+import android.content.Intent
 import android.os.Bundle
-import android.widget.EditText
-import android.widget.TextView
-import android.widget.Button
-import android.widget.Spinner
-import android.widget.ArrayAdapter
+import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.activity.enableEdgeToEdge
-import android.app.Application
-import android.content.Intent
-import android.widget.RelativeLayout
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.FirebaseApp
+
 data class Goal(val category: String, var number: Int)
 
 data class CollectionItem(val itemAdded: String, val description: String, val dateOfAcquisition: String)
@@ -58,15 +52,10 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        enableEdgeToEdge()
 
         // Initialize Firebase
         FirebaseApp.initializeApp(this)
-
-        // Now you can use FirebaseAuth
-        val auth:  FirebaseAuth = FirebaseAuth.getInstance()
-        // Ensure the ID matches the one defined in activity_main.xml
-        val mainLayout = findViewById<RelativeLayout>(R.id.main)
+        auth = FirebaseAuth.getInstance()
 
         // Initialize UI components
         goalInput = findViewById(R.id.goal_number_input)
@@ -144,6 +133,4 @@ class MainActivity : AppCompatActivity() {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         categorySpinner.adapter = adapter
     }
-
-
 }
