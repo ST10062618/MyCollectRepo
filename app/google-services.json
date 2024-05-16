@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "769938454734",
+    "project_id": "mycollect-c2ee2",
+    "storage_bucket": "mycollect-c2ee2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:769938454734:android:0a026df13ccbef137e789f",
+        "android_client_info": {
+          "package_name": "com.authorisation.mycollectsub"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA2SxlVJkSTJ6ViIDyETe0Y7ZK3me-T1gQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
