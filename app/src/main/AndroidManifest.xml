@@ -31,14 +31,18 @@
             android:name=".LogIn"
             android:exported="false"
             android:label="@string/title_activity_log_in"
-            android:theme="@style/Theme.MyCollectSub" />
+            android:theme="@style/Theme.MyCollectSub"
+            android:windowSoftInputMode="adjustPan"
+            />
 
         <!-- SignUp Activity -->
         <activity
             android:name=".SignUp"
             android:exported="false"
             android:label="@string/title_activity_sign_up"
-            android:theme="@style/Theme.MyCollectSub" />
+            android:theme="@style/Theme.MyCollectSub"
+            android:windowSoftInputMode="adjustPan"
+            />
 
         <!-- MainActivity -->
         <activity
