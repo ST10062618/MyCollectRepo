@@ -1,6 +1,5 @@
 package com.authorisation.mycollectsub
 
-
 import android.content.Intent
 import android.os.Bundle
 import android.widget.*
@@ -35,6 +34,7 @@ object DataManager {
         return collection.toList()
     }
 }
+
 class MainActivity : AppCompatActivity() {
 
     private lateinit var categoryInput: EditText
@@ -77,43 +77,58 @@ class MainActivity : AppCompatActivity() {
 
         // Method to add category
         addCategoryButton.setOnClickListener {
-            val category = categoryInput.text.toString().trim()
-            if (category.isNotBlank()) {
-                DataManager.addCategoryWithGoal(category, 0)
-                categoryInput.text.clear()
-                updateCategorySpinner()
-            } else {
-                // Show error message if category is empty
+            try {
+                val category = categoryInput.text.toString().trim()
+                if (category.isNotBlank()) {
+                    DataManager.addCategoryWithGoal(category, 0)
+                    categoryInput.text.clear()
+                    updateCategorySpinner()
+                    Toast.makeText(this, "Category added successfully", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, "Category cannot be empty", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(this, "Error adding category: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
             }
         }
 
         // Method to set goals for selected category
         addGoalButton.setOnClickListener {
-            val selectedCategory = categorySpinner.selectedItem as String
-            val goalNumberInput = goalInput.text.toString().toIntOrNull() ?: 0
+            try {
+                val selectedCategory = categorySpinner.selectedItem as String
+                val goalNumberInput = goalInput.text.toString().toIntOrNull() ?: 0
 
-            if (selectedCategory.isNotBlank()) {
-                val existingGoal = DataManager.goals.find { it.category == selectedCategory }
-                if (existingGoal != null) {
-                    existingGoal.number = goalNumberInput
-                    goalInput.text.clear() // Clear goal number input
+                if (selectedCategory.isNotBlank()) {
+                    val existingGoal = DataManager.goals.find { it.category == selectedCategory }
+                    if (existingGoal != null) {
+                        existingGoal.number = goalNumberInput
+                        goalInput.text.clear() // Clear goal number input
+                        Toast.makeText(this, "Goal set successfully", Toast.LENGTH_SHORT).show()
+                    }
                 }
+            } catch (e: Exception) {
+                Toast.makeText(this, "Error setting goal: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
             }
         }
 
         // Method to add item to the collection
         addItemButton.setOnClickListener {
-            val item = itemInput.text.toString().trim()
-            val description = descriptionInput.text.toString().trim()
-            val date = dateInput.text.toString().trim()
+            try {
+                val item = itemInput.text.toString().trim()
+                val description = descriptionInput.text.toString().trim()
+                val date = dateInput.text.toString().trim()
 
-            if (item.isNotBlank() && description.isNotBlank()) {
-                DataManager.addItemToCollection(item, description, date)
-                itemInput.text.clear()
-                descriptionInput.text.clear()
-                dateInput.text.clear()
-            } else {
-                // Show error message if item or description is empty
+                if (item.isNotBlank() && description.isNotBlank()) {
+                    DataManager.addItemToCollection(item, description, date)
+                    itemInput.text.clear()
+                    descriptionInput.text.clear()
+                    dateInput.text.clear()
+                    Toast.makeText(this, "Item added successfully", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, "Item and description cannot be empty", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(this, "Error adding item: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -126,9 +141,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateCategorySpinner() {
-        val categories = DataManager.getAllGoals().map { it.category }
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, categories)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        categorySpinner.adapter = adapter
+        try {
+            val categories = DataManager.getAllGoals().map { it.category }
+            val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, categories)
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            categorySpinner.adapter = adapter
+        } catch (e: Exception) {
+            Toast.makeText(this, "Error updating category spinner: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
+        }
     }
 }
