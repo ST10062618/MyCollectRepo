@@ -1,8 +1,7 @@
 package com.authorisation.mycollectsub
 
 
-import GoalAdapter
-import ItemAdapter
+
 import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity

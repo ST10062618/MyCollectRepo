@@ -13,14 +13,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyCollectSub"
         tools:targetApi="31">
-        <activity
-            android:name=".ItemAdapter"
-            android:exported="false"
-            android:theme="@style/Theme.MyCollectSub" />
-        <activity
-            android:name=".GoalAdapter"
-            android:exported="false"
-            android:theme="@style/Theme.MyCollectSub" /> <!-- Splash Activity as the launcher activity -->
+
+        <!-- Define your activities here -->
         <activity
             android:name=".Splash"
             android:exported="true"
@@ -28,30 +22,34 @@
             android:theme="@style/Theme.MyCollectSub">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity> <!-- LogIn Activity -->
+        </activity>
+
         <activity
             android:name=".LogIn"
             android:exported="false"
             android:label="@string/title_activity_log_in"
             android:theme="@style/Theme.MyCollectSub"
-            android:windowSoftInputMode="adjustPan" /> <!-- SignUp Activity -->
+            android:windowSoftInputMode="adjustPan" />
+
         <activity
             android:name=".SignUp"
             android:exported="false"
             android:label="@string/title_activity_sign_up"
             android:theme="@style/Theme.MyCollectSub"
-            android:windowSoftInputMode="adjustPan" /> <!-- MainActivity -->
+            android:windowSoftInputMode="adjustPan" />
+
         <activity
             android:name=".MainActivity"
-            android:exported="true" /> <!-- ViewCollections Activity -->
+            android:exported="true" />
+
         <activity
             android:name=".ViewCollectionsActivity"
             android:exported="false"
             android:label="@string/title_activity_view_collections"
             android:theme="@style/Theme.MyCollectSub" />
+
     </application>
 
 </manifest>

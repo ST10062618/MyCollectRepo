@@ -1,11 +1,12 @@
+package com.authorisation.mycollectsub
+
+
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.authorisation.mycollectsub.Goal
-import com.authorisation.mycollectsub.R
 
 class GoalAdapter(private val goals: List<Goal>) : RecyclerView.Adapter<GoalAdapter.GoalViewHolder>() {
 
@@ -23,7 +24,7 @@ class GoalAdapter(private val goals: List<Goal>) : RecyclerView.Adapter<GoalAdap
 
     override fun onBindViewHolder(holder: GoalViewHolder, position: Int) {
         val goal = goals[position]
-        holder.icon.setImageResource(R.drawable.ic_goal) // change to specific image for category
+        holder.icon.setImageResource(R.drawable.ic_goal)
         holder.category.text = goal.category
         holder.number.text = "Goal: ${goal.number}"
     }
