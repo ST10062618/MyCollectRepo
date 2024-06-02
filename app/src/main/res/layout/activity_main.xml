@@ -13,6 +13,15 @@
         android:layout_height="match_parent"
         android:padding="16dp">
 
+        <!-- Navigation Drawer -->
+        <com.google.android.material.navigation.NavigationView
+            android:id="@+id/navigation_view"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            app:menu="@menu/drawer_menu"
+            app:headerLayout="@layout/nav_header"/>
+
         <!-- Heading: MyCollect -->
         <TextView
             android:id="@+id/header_text_view"
@@ -123,7 +132,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="162dp"
                 android:orientation="vertical"
                 android:padding="16dp">
 
@@ -131,40 +140,40 @@
                     android:id="@+id/item_input"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:backgroundTint="?attr/colorPrimary"
                     android:hint="Enter item"
                     android:minHeight="48dp"
-                    android:backgroundTint="?attr/colorPrimary"
                     android:padding="8dp" />
 
                 <EditText
                     android:id="@+id/item_description_input"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Enter item description"
                     android:layout_marginTop="8dp"
-                    android:minHeight="48dp"
                     android:backgroundTint="?attr/colorPrimary"
+                    android:hint="Enter item description"
+                    android:minHeight="48dp"
                     android:padding="8dp" />
 
                 <EditText
                     android:id="@+id/item_date_input"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Enter date of acquisition (YYYY-MM-DD)"
                     android:layout_marginTop="8dp"
-                    android:minHeight="48dp"
                     android:backgroundTint="?attr/colorPrimary"
+                    android:hint="Enter date of acquisition (YYYY-MM-DD)"
+                    android:minHeight="48dp"
                     android:padding="8dp" />
 
                 <Button
                     android:id="@+id/add_item_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Add Item"
                     android:layout_gravity="end"
                     android:layout_marginTop="8dp"
                     android:backgroundTint="?attr/colorPrimary"
-                    android:textColor="@android:color/white"/>
+                    android:text="Add Item"
+                    android:textColor="@android:color/white" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
@@ -182,13 +191,6 @@
             android:layout_marginBottom="16dp"/>
     </RelativeLayout>
 
-    <!-- Navigation Drawer -->
-    <com.google.android.material.navigation.NavigationView
-        android:id="@+id/navigation_view"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        app:menu="@menu/drawer_menu"
-        app:headerLayout="@layout/nav_header"/>
+
 
 </androidx.drawerlayout.widget.DrawerLayout>
