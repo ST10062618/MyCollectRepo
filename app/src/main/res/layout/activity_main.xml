@@ -36,7 +36,6 @@
                 android:textStyle="bold" />
         </androidx.appcompat.widget.Toolbar>
 
-        <!-- Rest of your layout elements -->
 
         <!-- Heading: MyCollect -->
         <TextView
