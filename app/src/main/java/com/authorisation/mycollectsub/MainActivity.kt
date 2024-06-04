@@ -49,7 +49,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var addCategoryButton: Button
     private lateinit var addGoalButton: Button
     private lateinit var addItemButton: Button
-    private lateinit var viewCollectionsButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,6 +60,7 @@ class MainActivity : AppCompatActivity() {
         // Initialize Toolbar
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
 
         // Initialize UI components
         goalInput = findViewById(R.id.goal_number_input)
@@ -72,15 +72,9 @@ class MainActivity : AppCompatActivity() {
         addCategoryButton = findViewById(R.id.add_category_button)
         addGoalButton = findViewById(R.id.add_goal_button)
         addItemButton = findViewById(R.id.add_item_button)
-        viewCollectionsButton = findViewById(R.id.view_collections_button)
 
         // Populate initial categories into the Spinner
         updateCategorySpinner()
-
-        // Handle button click to navigate to ViewCollectionsActivity
-        viewCollectionsButton.setOnClickListener {
-            startActivity(Intent(this, ViewCollectionsActivity::class.java))
-        }
 
         // Method to add category
         addCategoryButton.setOnClickListener {
@@ -123,8 +117,7 @@ class MainActivity : AppCompatActivity() {
                 dateInput.text.clear()
                 Toast.makeText(this, "Item added successfully", Toast.LENGTH_SHORT).show()
             } else {
-                Toast.makeText(this, "Item and description cannot be empty", Toast.LENGTH_SHORT)
-                    .show()
+                Toast.makeText(this, "Item and description cannot be empty", Toast.LENGTH_SHORT).show()
             }
         }
 
