@@ -1,3 +1,4 @@
+<!-- res/layout/activity_main.xml -->
 <androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -13,27 +14,29 @@
         android:layout_height="match_parent"
         android:padding="16dp">
 
-        <!-- Navigation Drawer -->
-        <com.google.android.material.navigation.NavigationView
-            android:id="@+id/navigation_view"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="start"
-            app:menu="@menu/drawer_menu"
-            app:headerLayout="@layout/nav_header"/>
+        <!-- Toolbar -->
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary"
+            android:elevation="4dp"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+        <!-- Rest of your layout elements -->
 
         <!-- Heading: MyCollect -->
         <TextView
             android:id="@+id/header_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="MyCollect"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:paddingBottom="16dp"
             android:gravity="center_horizontal"
-            android:layout_alignParentTop="true"
-            android:textColor="@android:color/black"/>
+            android:paddingBottom="16dp"
+            android:text="MyCollect"
+            android:textColor="@android:color/black"
+            android:textSize="24sp"
+            android:textStyle="bold" />
 
         <!-- Add Category Section -->
         <androidx.cardview.widget.CardView
@@ -132,7 +135,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="162dp"
+                android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:padding="16dp">
 
@@ -184,13 +187,22 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/add_item_card"
             android:layout_marginTop="16dp"
-            android:text="View Collections"
-            android:textSize="18sp"
             android:backgroundTint="?attr/colorPrimary"
+            android:minHeight="48dp"
+            android:text="View Collections"
             android:textColor="@android:color/white"
-            android:layout_marginBottom="16dp"/>
+            android:textSize="18sp" />
+
     </RelativeLayout>
 
-
+    <!-- Navigation view if required -->
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/navigation_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        app:menu="@menu/main_menu"
+        app:headerLayout="@layout/nav_header"
+        />
 
 </androidx.drawerlayout.widget.DrawerLayout>
