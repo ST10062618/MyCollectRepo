@@ -1,0 +1,9 @@
+<!-- res/menu/main_menu.xml -->
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_view_collections"
+        android:title="View Collections" />
+    <item
+        android:id="@+id/nav_sign_out"
+        android:title="Sign Out" />
+</menu>
