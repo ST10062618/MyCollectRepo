@@ -1,9 +1,14 @@
 package com.authorisation.mycollectsub
 
 import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Bundle
+import android.provider.MediaStore
+import android.widget.Button
+import android.widget.ImageView
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -40,6 +45,9 @@ object DataManager {
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var cameraOpenId: Button
+    lateinit var clickImageId: ImageView
+
     private lateinit var categoryInput: EditText
     private lateinit var goalInput: EditText
     private lateinit var itemInput: EditText
@@ -56,6 +64,16 @@ class MainActivity : AppCompatActivity() {
 
         // Initialize Firebase
         FirebaseApp.initializeApp(this)
+
+        cameraOpenId = findViewById(R.id.camera_button)
+        clickImageId = findViewById(R.id.click_image)
+
+        cameraOpenId.setOnClickListener(View.OnClickListener { v: View? ->
+            // Create the camera_intent ACTION_IMAGE_CAPTURE it will open the camera for capture the image
+            val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            // Start the activity with camera_intent, and request pic id
+            startActivityForResult(cameraIntent, pic_id)
+        })
 
         // Initialize Toolbar
         val toolbar: Toolbar = findViewById(R.id.toolbar)
@@ -156,4 +174,33 @@ class MainActivity : AppCompatActivity() {
             else -> super.onOptionsItemSelected(item)
         }
     }
+
+    private fun openCamera() {
+        // Create the camera_intent ACTION_IMAGE_CAPTURE it will open the camera for capture the image
+        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        // Start the activity with camera_intent, and request pic id
+        startActivityForResult(cameraIntent, pic_id)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == pic_id) {
+            // BitMap is data structure of image file which store the image in memory
+            val photo = data!!.extras!!["data"] as Bitmap?
+            // Set the image in imageview for display
+            clickImageId.setImageBitmap(photo)
+        }
+    }
+
+    companion object {
+        private const val pic_id = 123
+    }
+
+    private fun handleItemIconClick(collectionItem: CollectionItem) {
+        openCamera()
+        // You can also update the CollectionItem data with the captured image information here
+    }
+
+
 }
