@@ -2,6 +2,7 @@ package com.authorisation.mycollectsub
 
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.provider.MediaStore
 import android.widget.Button
@@ -18,7 +19,13 @@ import com.google.firebase.FirebaseApp
 
 data class Goal(val category: String, var number: Int)
 
-data class CollectionItem(val itemAdded: String, val description: String, val dateOfAcquisition: String)
+data class CollectionItem(
+    val itemAdded: String,
+    val description: String,
+    val dateOfAcquisition: String,
+    var image: Bitmap? = null
+)
+
 
 object DataManager {
     val goals = mutableListOf<Goal>()
@@ -30,8 +37,8 @@ object DataManager {
         }
     }
 
-    fun addItemToCollection(itemAdded: String, description: String, dateOfAcquisition: String) {
-        collection.add(CollectionItem(itemAdded, description, dateOfAcquisition))
+    fun addItemToCollection(item: CollectionItem) {
+        collection.add(item)
     }
 
     fun getAllGoals(): List<Goal> {
@@ -42,6 +49,7 @@ object DataManager {
         return collection.toList()
     }
 }
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -129,15 +137,29 @@ class MainActivity : AppCompatActivity() {
             val date = dateInput.text.toString().trim()
 
             if (item.isNotBlank() && description.isNotBlank()) {
-                DataManager.addItemToCollection(item, description, date)
+                // Capture the image and store it in the CollectionItem
+                val drawable = clickImageId.drawable
+                val photo = if (drawable is BitmapDrawable) {
+                    drawable.bitmap
+                } else {
+                    null
+                }
+
+                val newItem = CollectionItem(item, description, date, photo)
+                DataManager.addItemToCollection(newItem)
+
                 itemInput.text.clear()
                 descriptionInput.text.clear()
                 dateInput.text.clear()
+                clickImageId.setImageDrawable(null) // Clear the image view
+
                 Toast.makeText(this, "Item added successfully", Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(this, "Item and description cannot be empty", Toast.LENGTH_SHORT).show()
             }
         }
+
+
 
         // Apply WindowInsetsListener to handle system bars
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_content)) { v, insets ->
@@ -188,8 +210,13 @@ class MainActivity : AppCompatActivity() {
         if (requestCode == pic_id) {
             // BitMap is data structure of image file which store the image in memory
             val photo = data!!.extras!!["data"] as Bitmap?
+
             // Set the image in imageview for display
             clickImageId.setImageBitmap(photo)
+
+            // Store the captured image in the CollectionItem object
+            val currentItem = DataManager.collection.lastOrNull()
+            currentItem?.image = photo
         }
     }
 

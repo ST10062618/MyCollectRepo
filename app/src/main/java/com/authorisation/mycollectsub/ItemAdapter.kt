@@ -8,28 +8,33 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class ItemAdapter(private val items: List<CollectionItem>) : RecyclerView.Adapter<ItemAdapter.ItemViewHolder>() {
+class CollectionItemAdapter(
+    private val items: List<CollectionItem>
+) : RecyclerView.Adapter<CollectionItemAdapter.ViewHolder>() {
 
-    class ItemViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val icon: ImageView = view.findViewById(R.id.item_icon)
-        val itemName: TextView = view.findViewById(R.id.item_name)
-        val description: TextView = view.findViewById(R.id.item_description)
-        val date: TextView = view.findViewById(R.id.item_date)
+    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val itemImage: ImageView = itemView.findViewById(R.id.item_image)
+        val itemName: TextView = itemView.findViewById(R.id.item_name)
+        val itemDescription: TextView = itemView.findViewById(R.id.item_description)
+        val itemDate: TextView = itemView.findViewById(R.id.item_date)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_item, parent, false)
-        return ItemViewHolder(view)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_item, parent, false)
+        return ViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = items[position]
-        holder.icon.setImageResource(R.drawable.ic_item)
         holder.itemName.text = item.itemAdded
-        holder.description.text = item.description
-        holder.date.text = item.dateOfAcquisition
+        holder.itemDescription.text = item.description
+        holder.itemDate.text = item.dateOfAcquisition
+
+        // Display the captured image in the ImageView
+        holder.itemImage.setImageBitmap(item.image)
     }
 
     override fun getItemCount() = items.size
 }
+
+
