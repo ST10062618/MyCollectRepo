@@ -13,6 +13,7 @@ class ViewCollectionsActivity : AppCompatActivity() {
 
     private lateinit var goalRecyclerView: RecyclerView
     private lateinit var itemRecyclerView: RecyclerView
+    private lateinit var collectionItemAdapter: CollectionItemAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,21 +27,30 @@ class ViewCollectionsActivity : AppCompatActivity() {
         goalRecyclerView.layoutManager = LinearLayoutManager(this)
         itemRecyclerView.layoutManager = LinearLayoutManager(this)
 
-        // Update UI with data
-        updateUI()
-
         // Set Back button click listener
         findViewById<Button>(R.id.back_button).setOnClickListener {
             finish()
         }
-    }
 
-    private fun updateUI() {
-        val goalsList = DataManager.getAllGoals()
-        val itemList = DataManager.getAllItems()
+        // Create the CollectionItemAdapter and set it to the itemRecyclerView
+        collectionItemAdapter = CollectionItemAdapter(DataManager.getAllItems())
+        itemRecyclerView.adapter = collectionItemAdapter
 
-        // Set Adapters
-        goalRecyclerView.adapter = GoalAdapter(goalsList)
-        itemRecyclerView.adapter = ItemAdapter(itemList)
+        // Register a ListUpdateCallback to observe changes in the DataManager.collection list
+        collectionItemAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                super.onItemRangeInserted(positionStart, itemCount)
+                collectionItemAdapter.notifyItemRangeInserted(positionStart, itemCount)
+            }
+
+            override fun onItemRangeRemoved(positionStart: Int, itemCount: Int) {
+                super.onItemRangeRemoved(positionStart, itemCount)
+                collectionItemAdapter.notifyItemRangeRemoved(positionStart, itemCount)
+            }
+        })
+
+        // Update the GoalAdapter with the initial data
+        goalRecyclerView.adapter = GoalAdapter(DataManager.getAllGoals())
     }
 }
+

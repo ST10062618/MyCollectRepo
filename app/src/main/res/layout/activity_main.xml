@@ -178,6 +178,23 @@
                     android:minHeight="48dp"
                     android:padding="8dp" />
 
+                <ImageView
+                    android:id="@+id/click_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:layout_marginBottom="10dp" />
+
+                <!-- add Camera Button to open the Camera -->
+                <Button
+                    android:id="@+id/camera_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginStart="150dp"
+                    android:text="Camera" />
+
                 <Button
                     android:id="@+id/add_item_button"
                     android:layout_width="wrap_content"
