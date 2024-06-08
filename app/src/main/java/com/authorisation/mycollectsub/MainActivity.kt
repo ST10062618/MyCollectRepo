@@ -26,7 +26,7 @@ data class CollectionItem(
     var image: Bitmap? = null
 )
 
-
+//Data manager
 object DataManager {
     val goals = mutableListOf<Goal>()
     val collection = mutableListOf<CollectionItem>()
