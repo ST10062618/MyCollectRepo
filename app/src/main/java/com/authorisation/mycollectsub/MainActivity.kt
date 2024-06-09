@@ -1,5 +1,6 @@
 package com.authorisation.mycollectsub
 
+import android.app.DatePickerDialog
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
@@ -16,6 +17,8 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.firebase.FirebaseApp
+import java.util.Calendar
+
 
 data class Goal(val category: String, var number: Int)
 
@@ -56,6 +59,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var cameraOpenId: Button
     lateinit var clickImageId: ImageView
 
+    //Date picker
+    private lateinit var datePickerDialog: DatePickerDialog
+
     private lateinit var categoryInput: EditText
     private lateinit var goalInput: EditText
     private lateinit var itemInput: EditText
@@ -65,6 +71,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var addCategoryButton: Button
     private lateinit var addGoalButton: Button
     private lateinit var addItemButton: Button
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -136,7 +143,7 @@ class MainActivity : AppCompatActivity() {
             val description = descriptionInput.text.toString().trim()
             val date = dateInput.text.toString().trim()
 
-            if (item.isNotBlank() && description.isNotBlank()) {
+            if (item.isNotBlank() && description.isNotBlank() && date.isNotBlank()) {
                 // Capture the image and store it in the CollectionItem
                 val drawable = clickImageId.drawable
                 val photo = if (drawable is BitmapDrawable) {
@@ -155,8 +162,14 @@ class MainActivity : AppCompatActivity() {
 
                 Toast.makeText(this, "Item added successfully", Toast.LENGTH_SHORT).show()
             } else {
-                Toast.makeText(this, "Item and description cannot be empty", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Item, description, and date cannot be empty", Toast.LENGTH_SHORT).show()
             }
+        }
+
+
+        val date_picker_icon: ImageView = findViewById(R.id.date_picker_icon)
+        date_picker_icon.setOnClickListener {
+            showDatePicker()
         }
 
 
@@ -228,6 +241,33 @@ class MainActivity : AppCompatActivity() {
         openCamera()
         // You can also update the CollectionItem data with the captured image information here
     }
+
+    //Date picker method
+    private fun showDatePicker() {
+        val calendar = Calendar.getInstance()
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH)
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+        datePickerDialog = DatePickerDialog(
+            this,
+            { _, selectedYear, selectedMonth, selectedDay ->
+                val selectedDate = "$selectedYear-${selectedMonth + 1}-$selectedDay"
+                dateInput.setText(selectedDate)
+            },
+            year,
+            month,
+            day
+        )
+
+        datePickerDialog.setOnCancelListener {
+            // Clear the date input if the user cancels the date picker dialog
+            dateInput.setText("")
+        }
+
+        datePickerDialog.show()
+    }
+
 
 
 }
