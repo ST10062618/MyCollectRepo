@@ -6,22 +6,20 @@ import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.provider.MediaStore
-import android.widget.Button
-import android.widget.ImageView
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.firebase.FirebaseApp
-import java.util.Calendar
+import java.util.*
 
+// Data class to represent a goal with a category, current count, and target number
+data class Goal(val category: String, var number: Int, var targetNumber: Int)
 
-data class Goal(val category: String, var number: Int)
-
+// Data class to represent a collection item with details and an optional image
 data class CollectionItem(
     val itemAdded: String,
     val description: String,
@@ -29,39 +27,48 @@ data class CollectionItem(
     var image: Bitmap? = null
 )
 
-//Data manager
+// Singleton object to manage data operations for goals and collection items
 object DataManager {
     val goals = mutableListOf<Goal>()
     val collection = mutableListOf<CollectionItem>()
+    lateinit var progressIndicators: MutableMap<String, ProgressBar>
 
+    // Add a new category with a goal if it doesn't already exist
     fun addCategoryWithGoal(category: String, targetNumber: Int) {
         if (!goals.any { it.category == category }) {
-            goals.add(Goal(category, targetNumber))
+            goals.add(Goal(category, 0, targetNumber))
         }
     }
 
+    // Add an item to the collection and update the corresponding goal's progress
     fun addItemToCollection(item: CollectionItem) {
         collection.add(item)
+        val goal = goals.find { it.category == item.itemAdded }
+        goal?.let {
+            it.number++ // Increment the goal count
+            updateProgress(it.category, it.number, it.targetNumber)
+        }
     }
 
-    fun getAllGoals(): List<Goal> {
-        return goals.toList()
-    }
+    // Retrieve all goals
+    fun getAllGoals(): List<Goal> = goals.toList()
 
-    fun getAllItems(): List<CollectionItem> {
-        return collection.toList()
+    // Retrieve all collection items
+    fun getAllItems(): List<CollectionItem> = collection.toList()
+
+    // Update progress of a goal based on current and target values
+    private fun updateProgress(category: String, currentValue: Int, targetValue: Int) {
+        val progressBar = progressIndicators[category]
+        progressBar?.let {
+            it.progress = currentValue
+        }
     }
 }
 
-
 class MainActivity : AppCompatActivity() {
-
     private lateinit var cameraOpenId: Button
-    lateinit var clickImageId: ImageView
-
-    //Date picker
+    private lateinit var clickImageId: ImageView
     private lateinit var datePickerDialog: DatePickerDialog
-
     private lateinit var categoryInput: EditText
     private lateinit var goalInput: EditText
     private lateinit var itemInput: EditText
@@ -72,6 +79,27 @@ class MainActivity : AppCompatActivity() {
     private lateinit var addGoalButton: Button
     private lateinit var addItemButton: Button
 
+    companion object {
+        private const val PIC_ID = 123
+    }
+
+    private fun initializeProgressBars() {
+        val progressContainer = findViewById<LinearLayout>(R.id.progress_container)
+        progressContainer.removeAllViews() // Clear previous progress bars
+
+        for (goal in DataManager.getAllGoals()) {
+            val progressBar = ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal).apply {
+                max = goal.targetNumber
+                progress = goal.number
+            }
+            val textView = TextView(this).apply {
+                text = "${goal.category}: ${goal.number}/${goal.targetNumber}"
+            }
+            progressContainer.addView(textView)
+            progressContainer.addView(progressBar)
+            DataManager.progressIndicators[goal.category] = progressBar
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,22 +108,17 @@ class MainActivity : AppCompatActivity() {
         // Initialize Firebase
         FirebaseApp.initializeApp(this)
 
+        // Initialize UI components and listeners
+        initializeUI()
+        initializeListeners()
+        initializeProgressBars() // Initialize progress bars
+        updateCategorySpinner()
+    }
+
+    // Initialize UI components by finding views by their IDs
+    private fun initializeUI() {
         cameraOpenId = findViewById(R.id.camera_button)
         clickImageId = findViewById(R.id.click_image)
-
-        cameraOpenId.setOnClickListener(View.OnClickListener { v: View? ->
-            // Create the camera_intent ACTION_IMAGE_CAPTURE it will open the camera for capture the image
-            val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-            // Start the activity with camera_intent, and request pic id
-            startActivityForResult(cameraIntent, pic_id)
-        })
-
-        // Initialize Toolbar
-        val toolbar: Toolbar = findViewById(R.id.toolbar)
-        setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayShowTitleEnabled(false)
-
-        // Initialize UI components
         goalInput = findViewById(R.id.goal_number_input)
         categoryInput = findViewById(R.id.category_input)
         itemInput = findViewById(R.id.item_input)
@@ -106,75 +129,13 @@ class MainActivity : AppCompatActivity() {
         addGoalButton = findViewById(R.id.add_goal_button)
         addItemButton = findViewById(R.id.add_item_button)
 
-        // Populate initial categories into the Spinner
-        updateCategorySpinner()
+        val toolbar: Toolbar = findViewById(R.id.toolbar)
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
 
-        // Method to add category
-        addCategoryButton.setOnClickListener {
-            val category = categoryInput.text.toString().trim()
-            if (category.isNotBlank()) {
-                DataManager.addCategoryWithGoal(category, 0)
-                categoryInput.text.clear()
-                updateCategorySpinner()
-                Toast.makeText(this, "Category added successfully", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this, "Category cannot be empty", Toast.LENGTH_SHORT).show()
-            }
-        }
+        DataManager.progressIndicators = mutableMapOf()
 
-        // Method to set goals for selected category
-        addGoalButton.setOnClickListener {
-            val selectedCategory = categorySpinner.selectedItem as String
-            val goalNumberInput = goalInput.text.toString().toIntOrNull() ?: 0
-
-            if (selectedCategory.isNotBlank()) {
-                val existingGoal = DataManager.goals.find { it.category == selectedCategory }
-                if (existingGoal != null) {
-                    existingGoal.number = goalNumberInput
-                    goalInput.text.clear() // Clear goal number input
-                    Toast.makeText(this, "Goal set successfully", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
-
-        // Method to add item to the collection
-        addItemButton.setOnClickListener {
-            val item = itemInput.text.toString().trim()
-            val description = descriptionInput.text.toString().trim()
-            val date = dateInput.text.toString().trim()
-
-            if (item.isNotBlank() && description.isNotBlank() && date.isNotBlank()) {
-                // Capture the image and store it in the CollectionItem
-                val drawable = clickImageId.drawable
-                val photo = if (drawable is BitmapDrawable) {
-                    drawable.bitmap
-                } else {
-                    null
-                }
-
-                val newItem = CollectionItem(item, description, date, photo)
-                DataManager.addItemToCollection(newItem)
-
-                itemInput.text.clear()
-                descriptionInput.text.clear()
-                dateInput.text.clear()
-                clickImageId.setImageDrawable(null) // Clear the image view
-
-                Toast.makeText(this, "Item added successfully", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this, "Item, description, and date cannot be empty", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-
-        val date_picker_icon: ImageView = findViewById(R.id.date_picker_icon)
-        date_picker_icon.setOnClickListener {
-            showDatePicker()
-        }
-
-
-
-        // Apply WindowInsetsListener to handle system bars
+        // Set padding to avoid overlap with system bars
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_content)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -182,6 +143,115 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // Initialize listeners for button clicks and other interactive elements
+    private fun initializeListeners() {
+        cameraOpenId.setOnClickListener { openCamera() }
+        addCategoryButton.setOnClickListener { addCategory() }
+        addGoalButton.setOnClickListener { setGoal() }
+        addItemButton.setOnClickListener { addItem() }
+        findViewById<ImageView>(R.id.date_picker_icon).setOnClickListener { showDatePicker() }
+    }
+
+    // Add a new category and update the spinner if the category input is not empty
+    private fun addCategory() {
+        val category = categoryInput.text.toString().trim()
+        if (category.isNotBlank()) {
+            DataManager.addCategoryWithGoal(category, 0)
+            categoryInput.text.clear()
+            updateCategorySpinner()
+            Toast.makeText(this, "Category added successfully", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(this, "Category cannot be empty", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    // Set a goal for the selected category
+    private fun setGoal() {
+        val selectedCategory = categorySpinner.selectedItem as String
+        val goalNumberInput = goalInput.text.toString().toIntOrNull() ?: 0
+
+        if (selectedCategory.isNotBlank()) {
+            val existingGoal = DataManager.goals.find { it.category == selectedCategory }
+            existingGoal?.let {
+                it.targetNumber = goalNumberInput
+                goalInput.text.clear()
+                Toast.makeText(this, "Goal set successfully", Toast.LENGTH_SHORT).show()
+                initializeProgressBars() // Re-initialize progress bars to update UI
+            }
+        }
+    }
+
+    // Add a new item to the collection and update the relevant fields
+    private fun addItem() {
+        val item = itemInput.text.toString().trim()
+        val description = descriptionInput.text.toString().trim()
+        val date = dateInput.text.toString().trim()
+
+        val selectedCategory = categorySpinner.selectedItem as? String
+        val existingGoal = selectedCategory?.let { category ->
+            DataManager.goals.find { it.category == category }
+        }
+
+        val photo = (clickImageId.drawable as? BitmapDrawable)?.bitmap
+        if (item.isNotBlank() && description.isNotBlank() && date.isNotBlank() && photo != null) {
+            if (selectedCategory != null && existingGoal != null) {
+                val newItem = CollectionItem(selectedCategory, description, date, photo)
+                DataManager.addItemToCollection(newItem)
+
+                itemInput.text.clear()
+                descriptionInput.text.clear()
+                dateInput.text.clear()
+                clickImageId.setImageDrawable(null)
+
+                Toast.makeText(this, "Item added successfully", Toast.LENGTH_SHORT).show()
+            } else {
+                if (selectedCategory == null) {
+                    Toast.makeText(this, "Please select a category", Toast.LENGTH_SHORT).show()
+                } else if (existingGoal == null) {
+                    Toast.makeText(this, "Please set a goal for the selected category", Toast.LENGTH_SHORT).show()
+                }
+            }
+        } else {
+            Toast.makeText(this, "Please fill all fields and take a photo", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+
+    // Open the camera to take a photo
+    private fun openCamera() {
+        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        startActivityForResult(cameraIntent, PIC_ID)
+    }
+
+    // Handle the result from the camera activity
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == PIC_ID && resultCode == RESULT_OK) {
+            val photo = data?.extras?.get("data") as? Bitmap
+            clickImageId.setImageBitmap(photo)
+            DataManager.collection.lastOrNull()?.image = photo
+        }
+    }
+
+    // Show a date picker dialog to select a date
+    private fun showDatePicker() {
+        val calendar = Calendar.getInstance()
+        datePickerDialog = DatePickerDialog(
+            this,
+            { _, year, month, dayOfMonth ->
+                dateInput.setText("$year-${month + 1}-$dayOfMonth")
+            },
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH)
+        )
+        datePickerDialog.setOnCancelListener {
+            dateInput.setText("")
+        }
+        datePickerDialog.show()
+    }
+
+    // Update the category spinner with the current list of categories
     private fun updateCategorySpinner() {
         val categories = DataManager.getAllGoals().map { it.category }
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, categories)
@@ -189,12 +259,13 @@ class MainActivity : AppCompatActivity() {
         categorySpinner.adapter = adapter
     }
 
+    // Inflate the options menu
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
         return true
     }
 
-    // Menu navigation
+    // Handle item selections from the options menu
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.nav_view_collections -> {
@@ -203,71 +274,10 @@ class MainActivity : AppCompatActivity() {
             }
             R.id.nav_sign_out -> {
                 startActivity(Intent(this, LogIn::class.java))
-                finish() // Optionally, finish this activity so the user can't navigate back to it
+                finish()
                 true
             }
             else -> super.onOptionsItemSelected(item)
         }
     }
-
-    private fun openCamera() {
-        // Create the camera_intent ACTION_IMAGE_CAPTURE it will open the camera for capture the image
-        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        // Start the activity with camera_intent, and request pic id
-        startActivityForResult(cameraIntent, pic_id)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == pic_id) {
-            // BitMap is data structure of image file which store the image in memory
-            val photo = data!!.extras!!["data"] as Bitmap?
-
-            // Set the image in imageview for display
-            clickImageId.setImageBitmap(photo)
-
-            // Store the captured image in the CollectionItem object
-            val currentItem = DataManager.collection.lastOrNull()
-            currentItem?.image = photo
-        }
-    }
-
-    companion object {
-        private const val pic_id = 123
-    }
-
-    private fun handleItemIconClick(collectionItem: CollectionItem) {
-        openCamera()
-        // You can also update the CollectionItem data with the captured image information here
-    }
-
-    //Date picker method
-    private fun showDatePicker() {
-        val calendar = Calendar.getInstance()
-        val year = calendar.get(Calendar.YEAR)
-        val month = calendar.get(Calendar.MONTH)
-        val day = calendar.get(Calendar.DAY_OF_MONTH)
-
-        datePickerDialog = DatePickerDialog(
-            this,
-            { _, selectedYear, selectedMonth, selectedDay ->
-                val selectedDate = "$selectedYear-${selectedMonth + 1}-$selectedDay"
-                dateInput.setText(selectedDate)
-            },
-            year,
-            month,
-            day
-        )
-
-        datePickerDialog.setOnCancelListener {
-            // Clear the date input if the user cancels the date picker dialog
-            dateInput.setText("")
-        }
-
-        datePickerDialog.show()
-    }
-
-
-
 }

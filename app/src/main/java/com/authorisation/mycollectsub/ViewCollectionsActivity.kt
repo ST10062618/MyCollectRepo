@@ -1,18 +1,16 @@
 package com.authorisation.mycollectsub
 
-
-
 import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
-
-class ViewCollectionsActivity : AppCompatActivity() {
+class ViewCollectionsActivity : AppCompatActivity(), GoalAdapter.GoalItemClickListener {
 
     private lateinit var goalRecyclerView: RecyclerView
     private lateinit var itemRecyclerView: RecyclerView
+    private lateinit var goalAdapter: GoalAdapter
     private lateinit var collectionItemAdapter: CollectionItemAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,25 +30,19 @@ class ViewCollectionsActivity : AppCompatActivity() {
             finish()
         }
 
-        // Create the CollectionItemAdapter and set it to the itemRecyclerView
-        collectionItemAdapter = CollectionItemAdapter(DataManager.getAllItems())
+        // Create and set GoalAdapter to goalRecyclerView
+        goalAdapter = GoalAdapter(DataManager.getAllGoals(), this)
+        goalRecyclerView.adapter = goalAdapter
+
+        // Create and set CollectionItemAdapter to itemRecyclerView
+        collectionItemAdapter = CollectionItemAdapter(emptyList()) // Initialize with empty list
         itemRecyclerView.adapter = collectionItemAdapter
+    }
 
-        // Register a ListUpdateCallback to observe changes in the DataManager.collection list
-        collectionItemAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
-            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
-                super.onItemRangeInserted(positionStart, itemCount)
-                collectionItemAdapter.notifyItemRangeInserted(positionStart, itemCount)
-            }
-
-            override fun onItemRangeRemoved(positionStart: Int, itemCount: Int) {
-                super.onItemRangeRemoved(positionStart, itemCount)
-                collectionItemAdapter.notifyItemRangeRemoved(positionStart, itemCount)
-            }
-        })
-
-        // Update the GoalAdapter with the initial data
-        goalRecyclerView.adapter = GoalAdapter(DataManager.getAllGoals())
+    // Handle category (goal) item click
+    override fun onGoalItemClick(category: String) {
+        // Filter items based on the selected category
+        val itemsForCategory = DataManager.getAllItems().filter { it.itemAdded == category }
+        collectionItemAdapter.updateItems(itemsForCategory)
     }
 }
-
